@@ -1,18 +1,18 @@
 <template>
-  <button class="btn" @click="call(floor)">
+  <button class="btn" @click="addToQueue(floor)">
     <span> ◉ </span>
   </button>
 </template>
 
 <script lang="ts">
+import { mapActions } from "vuex";
+
 export default {
   props: {
     floor: Number,
   },
   methods: {
-    call(floor: number) {
-      console.log(floor);
-    },
+    ...mapActions(["addToQueue"]),
   },
 };
 </script>

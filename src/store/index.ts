@@ -1,10 +1,23 @@
 import { createStore } from "vuex";
 
-export default createStore({
+interface State {
+  queue: Array<number>;
+}
+
+const store = createStore<State>({
   state: {
-    userData: "USER!",
+    queue: [],
   },
   mutations: {},
-  actions: {},
+  actions: {
+    addToQueue({ commit, state }, floor: number) {
+      state.queue.push(floor);
+    },
+    removeFromQueue({ state }) {
+      state.queue.shift();
+    },
+  },
   getters: {},
 });
+
+export default store;

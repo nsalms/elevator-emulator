@@ -20,7 +20,7 @@ import Button from "./components/Button.vue";
 export default {
   data() {
     return {
-      floors: 5,
+      floors: [...Array(5).keys()],
     };
   },
 };
@@ -36,8 +36,7 @@ export default {
 
 .col {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-direction: column-reverse;
   border: 2px solid darkgrey;
   padding: 0.25rem;
 }
