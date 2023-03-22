@@ -11,13 +11,17 @@ export interface Elevator {
 }
 
 export const useStore = defineStore("counter", {
+  // STATE
   state: () => {
     return {
       elevators: [] as Elevator[],
     };
   },
+
+  // ACTIONS
   actions: {
     initialize(elevatorId: number) {
+      // Инициализация объекта данных
       this.elevators.push({
         id: elevatorId,
         status: "idle",
@@ -30,20 +34,41 @@ export const useStore = defineStore("counter", {
     },
 
     addToQueue(elevatorId: number, floor: number) {
-      const el = this.elevators[elevatorId];
-      // Ничего не делаем, если в очереди уже есть нужный этаж
-      if (el.queue.some((item) => item == floor) || el.lastQueue == floor)
-        return;
+      // Функция добавляет в очередь
+      let result;
+
+      // Находим свободные лифты
+      let vacant = this.elevators.filter((el) => el.status == "idle");
+      if (vacant.length > 0) {
+        // Находим самый ближайший из свободных
+        result = vacant.reduce(function (prev, curr) {
+          return Math.abs(prev.curFloor - floor) <
+            Math.abs(curr.curFloor - floor)
+            ? prev
+            : curr;
+        });
+      } else {
+        // Если свободных нет - истользуем лифт с самой маленькой очередью
+        result = this.elevators.reduce(function (prev, curr) {
+          return prev.queue.length < curr.queue.length ? prev : curr;
+        });
+      }
+
+      // Ничего не делаем, если лифт уже на нужном этаже
+      if (result.lastQueue == floor) return;
 
       // Добавляем в очередь и запоминаем последний этаж
-      el.queue.push(floor);
-      el.lastQueue = floor;
+      result.queue.push(floor);
+      result.lastQueue = floor;
     },
 
     removeFromQueue(elevatorId: number) {
+      // Функция удаляет первый элемент из очереди
       this.elevators[elevatorId].queue.shift();
     },
   },
+
+  // GETTERS
   getters: {
     getElevator: (state) => (elevatorId: number) => {
       return state.elevators[elevatorId];

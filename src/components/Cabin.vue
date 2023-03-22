@@ -1,29 +1,27 @@
 <script setup lang="ts">
-import { useStore } from "../store";
-import { Elevator } from "../store";
-import { storeToRefs } from "pinia";
+// vue & store
 import { watch } from "vue";
+import { useStore } from "../store";
+import { storeToRefs } from "pinia";
+
+// types
+import { Elevator } from "../store";
+
+const props = defineProps<{ id: number }>();
 
 const store = useStore();
-let elevator: Elevator;
-
-const props = defineProps<{
-  id: number;
-}>();
-
 store.initialize(props.id);
 const { elevators } = storeToRefs(store);
-elevator = elevators.value[props.id];
+const elevator: Elevator = elevators.value[props.id];
 
+// Наблюдаем за очередью лифта
 watch(elevator.queue, (newQueue) => {
   const targetFloor = newQueue[0];
+
+  // Если в очереди еще есть этажи, и лифт свободен - начинаем движение
   if (newQueue.length > 0 && elevator.status == "idle") {
     elevate(targetFloor);
   }
-
-  //   let a = itemRefs.reduce(function (prev, curr) {
-  //     return prev.curFloor - targetFloor < curr.curFloor ? prev : curr;
-  //   });
 });
 
 // Функция для отправления на этаж
@@ -78,12 +76,6 @@ function elevate(floor: number) {
   &--blinking {
     animation: blinker 1s linear infinite;
   }
-}
-
-span {
-  color: red;
-  position: relative;
-  right: 200px;
 }
 
 @keyframes blinker {

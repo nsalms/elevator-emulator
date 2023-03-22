@@ -2,14 +2,16 @@
 import { useStore } from "../store";
 
 const store = useStore();
-const props = defineProps({
-  floor: Number,
-});
+const props = defineProps({ floor: Number });
 </script>
 
 <template>
-  <button class="btn" @click="store.addToQueue(0, props.floor)">
-    <span :class="store.isButtonActive(props.floor) ? 'active' : ''"> ◉ </span>
+  <button
+    class="btn"
+    @click="store.addToQueue(0, props.floor)"
+    :disabled="store.isButtonActive(props.floor)"
+  >
+    <span> ◉ </span>
   </button>
 </template>
 
@@ -25,14 +27,14 @@ const props = defineProps({
   border-radius: 0.25rem;
   font-size: 1rem;
   cursor: pointer;
+  color: #535bf2;
+
+  &:disabled {
+    color: chocolate;
+  }
 
   > span {
     line-height: 0;
-    color: #535bf2;
-
-    &.active {
-      color: chocolate;
-    }
   }
 }
 </style>
