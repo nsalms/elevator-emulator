@@ -1,59 +1,60 @@
+<script setup lang="ts">
+import { useStore } from "../store";
+import { Elevator } from "../store";
+import { storeToRefs } from "pinia";
+import { watch } from "vue";
+
+const store = useStore();
+let elevator: Elevator;
+
+const props = defineProps<{
+  id: number;
+}>();
+
+store.initialize(props.id);
+const { elevators } = storeToRefs(store);
+elevator = elevators.value[props.id];
+
+watch(elevator.queue, (newQueue) => {
+  const targetFloor = newQueue[0];
+  if (newQueue.length > 0 && elevator.status == "idle") {
+    elevate(targetFloor);
+  }
+
+  //   let a = itemRefs.reduce(function (prev, curr) {
+  //     return prev.curFloor - targetFloor < curr.curFloor ? prev : curr;
+  //   });
+});
+
+// Функция для отправления на этаж
+function elevate(floor: number) {
+  elevator.duration = Math.abs(elevator.curFloor - floor); // Вычисляем время между этажами в сек.
+  elevator.direction = elevator.curFloor - floor < 0; // Вычисляем направление движения
+  elevator.status = "moving";
+  elevator.curFloor = floor;
+
+  setTimeout(() => {
+    elevator.status = "blinking";
+    setTimeout(() => {
+      elevator.status = "idle";
+      store.removeFromQueue(props.id);
+    }, 3000);
+  }, elevator.duration * 1000);
+}
+</script>
+
 <template>
   <div
     class="cabin"
-    :class="{ 'cabin--blinking': status === 'blinking' }"
-    :style="`transform: translateY(${curFloor * -100}%);
-             transition-duration: ${duration}s;`"
+    :class="{ 'cabin--blinking': elevator.status === 'blinking' }"
+    :style="`transform: translateY(${elevator.curFloor * -100}%);
+             transition-duration: ${elevator.duration}s;`"
   >
-    <div class="cabin__board" v-if="status === 'moving'">
-      {{ direction ? "🡱" : "🡳" }} {{ curFloor }}
+    <div class="cabin__board" v-if="elevator.status === 'moving'">
+      {{ elevator.direction ? "🡱" : "🡳" }} {{ elevator.curFloor }}
     </div>
   </div>
-  <span>{{ store.state.queue }}</span>
 </template>
-
-<script lang="ts">
-import { useStore } from "vuex";
-import { ref, watch } from "vue";
-
-type Status = "idle" | "moving" | "blinking";
-
-export default {
-  setup() {
-    const store = useStore();
-
-    let curFloor = ref(0);
-    let duration = ref(0);
-    let direction = ref(); // Направлеине движения: true = UP, false = DOWN
-    let status = ref<Status>("idle");
-
-    // Наблюдаем за очередью
-    watch(store.state.queue, (newQueue) => {
-      if (newQueue.length > 0 && status.value == "idle") {
-        elevate(newQueue[0]);
-      }
-    });
-
-    // Функция для отправления на этаж
-    function elevate(floor: number) {
-      duration.value = Math.abs(curFloor.value - floor); // Вычисляем время между этажами в сек.
-      direction.value = curFloor.value - floor < 0; // Вычисляем направление движения
-      status.value = "moving";
-      curFloor.value = floor;
-
-      setTimeout(() => {
-        status.value = "blinking";
-        setTimeout(() => {
-          status.value = "idle";
-          store.dispatch("removeFromQueue");
-        }, 3000);
-      }, duration.value * 1000);
-    }
-
-    return { curFloor, duration, direction, status, store };
-  },
-};
-</script>
 
 <style lang="scss" scoped>
 .cabin {
@@ -66,6 +67,7 @@ export default {
   transition: all linear;
 
   &__board {
+    color: white;
     background: rgba(#000, 0.6);
     border-radius: 0.5rem;
     padding: 0.5rem;

@@ -1,24 +1,17 @@
+<script setup lang="ts">
+import { useStore } from "../store";
+
+const store = useStore();
+const props = defineProps({
+  floor: Number,
+});
+</script>
+
 <template>
-  <button class="btn" @click="addToQueue(floor)">
-    <span :class="isActive(floor) ? 'active' : ''"> ◉ </span>
+  <button class="btn" @click="store.addToQueue(0, props.floor)">
+    <span :class="store.isButtonActive(props.floor) ? 'active' : ''"> ◉ </span>
   </button>
 </template>
-
-<script lang="ts">
-import { mapActions, mapGetters } from "vuex";
-
-export default {
-  props: {
-    floor: Number,
-  },
-  computed: {
-    ...mapGetters(["isActive"]),
-  },
-  methods: {
-    ...mapActions(["addToQueue"]),
-  },
-};
-</script>
 
 <style lang="scss" scoped>
 .btn {
