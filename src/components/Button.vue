@@ -2,13 +2,13 @@
 import { useStore } from "../store";
 
 const store = useStore();
-const props = defineProps({ floor: Number });
+const props = defineProps<{ floor: number }>();
 </script>
 
 <template>
   <button
     class="btn"
-    @click="store.addToQueue(0, props.floor)"
+    @click="store.addToQueue(props.floor)"
     :disabled="store.isButtonActive(props.floor)"
   >
     <span> ◉ </span>

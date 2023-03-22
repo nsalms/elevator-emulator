@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useLocalStorage } from "@vueuse/core";
 
 export interface Elevator {
   id: number;
@@ -10,11 +11,15 @@ export interface Elevator {
   direction: boolean;
 }
 
-export const useStore = defineStore("counter", {
+export const useStore = defineStore("elevators", {
   // STATE
   state: () => {
     return {
       elevators: [] as Elevator[],
+      settings: {
+        floors: useLocalStorage("floors", 10),
+        elevators: useLocalStorage("elevators", 4),
+      },
     };
   },
 
@@ -33,7 +38,7 @@ export const useStore = defineStore("counter", {
       });
     },
 
-    addToQueue(elevatorId: number, floor: number) {
+    addToQueue(floor: number) {
       // Функция добавляет в очередь
       let result;
 
