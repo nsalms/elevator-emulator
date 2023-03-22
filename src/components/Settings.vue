@@ -11,10 +11,10 @@ const apply = () => window.location.reload();
 <template>
   <div class="settings">
     <label for="floors">Количество этажей:</label>
-    <input id="floors" type="number" v-model="settings.floors" /><br />
+    <input id="floors" type="number" v-model.number="settings.floors" /><br />
 
     <label for="elevators">Количество лифтов:</label>
-    <input id="elevators" type="number" v-model="settings.elevators" />
+    <input id="elevators" type="number" v-model.number="settings.elevators" />
 
     <input type="submit" @click="apply" value="Apply" />
   </div>
@@ -23,6 +23,7 @@ const apply = () => window.location.reload();
 <style lang="scss" scoped>
 .settings {
   position: fixed;
+  z-index: 99;
   top: 1rem;
   right: 1rem;
   background: #535bf2;
