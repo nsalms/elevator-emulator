@@ -28,7 +28,7 @@ export default {
 
 <style scoped>
 .wrap {
-  gap: 2rem;
+  gap: 0.5rem;
   display: flex;
   flex-wrap: nowrap;
   align-items: stretch;

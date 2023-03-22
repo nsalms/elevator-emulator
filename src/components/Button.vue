@@ -1,15 +1,18 @@
 <template>
   <button class="btn" @click="addToQueue(floor)">
-    <span> ◉ </span>
+    <span :class="isActive(floor) ? 'active' : ''"> ◉ </span>
   </button>
 </template>
 
 <script lang="ts">
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   props: {
     floor: Number,
+  },
+  computed: {
+    ...mapGetters(["isActive"]),
   },
   methods: {
     ...mapActions(["addToQueue"]),
@@ -32,6 +35,11 @@ export default {
 
   > span {
     line-height: 0;
+    color: #535bf2;
+
+    &.active {
+      color: chocolate;
+    }
   }
 }
 </style>
